@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- mapper 타입 선언  -->
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+ <!-- namespace가 기존의 패키지와 동일해야한다.  -->
+ <mapper namespace="org.jhcode33.mapper.BoardMapper">
+ 	<!-- <![CDATA[ 여기에 < 와 같은 특수문자를 xml이 잘못 해석해서, 이 코드는 해당 구문이 SQL문이라는 것을 이야기해줌. ]]> -->
+ 	<select id="getList" resultType="org.jhcode33.domain.BoardDTO">
+ 	<![CDATA[	
+ 		SELECT *
+ 		  FROM tbl_board
+ 	 ]]>
+ 	</select>
+ 	
+ 	<insert id="insert">	
+ 		INSERT INTO tbl_board (bno, title, content, writer)
+ 		VALUES (seq_board.nextval, #{title}, #{content}, #{writer})
+ 	</insert>
+ 	
+ 	<!-- 시퀀스의 값을 가져와서 넣기 때문에 콘솔에서 볼 수 있다. -->	
+ 	<!-- 새로 저장하는 값의 PK를 알아야할 경우나 해당 값을 출력해야하는 경우 아래와 같이 사용한다. -->
+ 	<insert id="insertSelectKey">
+ 		<selectKey keyProperty="bno" order="BEFORE" resultType="long">
+ 			SELECT seq_board.nextval 
+ 			  FROM dual
+ 		</selectKey>
+ 		INSERT INTO tbl_board (bno, title, content, writer)
+ 		VALUES (#{bno}, #{title}, #{content}, #{writer})
+ 	</insert>
+ 	
+ 	<select id="getOne" resultType="org.jhcode33.domain.BoardDTO">
+ 		SELECT *
+ 		  FROM tbl_board
+ 		 WHERE bno = #{bno}
+ 	</select>
+ 	
+ 	<update id="update">
+ 		UPDATE tbl_board
+ 		   SET title=#{title}
+ 		     , content=#{content}
+ 		     , writer=#{writer}
+ 		     , updatedate=sysdate
+ 		 WHERE bno=#{bno}
+ 	</update>
+ 	
+ 	<delete id="delete">
+ 		DELETE 
+ 		  FROM tbl_board
+ 		 WHERE bno=#{bno}
+ 	</delete>
+ 	
+ 	<select id="searchTitle" parameterType="String" resultType="org.jhcode33.domain.BoardDTO">
+ 		SELECT *
+ 		  FROM tbl_board
+ 		 WHERE title LIKE '%'||#{value}||'%'
+ 	</select>
+ 
+ </mapper>
